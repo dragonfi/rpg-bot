@@ -46,21 +46,6 @@ async def on_ready():
     print(bot.user.id)
     print('------')
 
-help_str = """
-Available commands:
-  /roll /r /fate /f /mh
-examples:
-  /roll d6
-  /roll 2d6
-  /roll 2d6-3
-  /roll f+2
-  /fate 2
-  /mh 2
-"""
-
-@bot.command()
-async def help(ctx):
-    await ctx.send(help_str)
 
 @bot.command()
 async def greet(ctx):
@@ -69,15 +54,17 @@ async def greet(ctx):
 @bot.command(name="roll", aliases=["r"])
 async def roll(ctx, *args):
     """
-    Use regular dice notation:
-        (N)d(S)[+-](M)
-        f[+-](M)
+    Rolls dice according to standard dice notation
 
-        4d6 + 3
-        4d6+3
+    Examples:
+        !roll d10
+        !r 2d6
+        !roll 2d6+3
+        !r 2d6-2
 
-        F+2
-        4F+2
+    Also supports special syntax for fate:
+        !r F+2
+        !roll 4F+2
     """
 
     notation = "".join(args).lower().strip()
@@ -85,14 +72,12 @@ async def roll(ctx, *args):
 
     match = re.match(r"(f|4f)([+-]\d*)?", notation)
     if match:
-        print("has match f")
         (_, modifier) = match.groups()
         modifier = int(modifier if modifier else 0)
         await ctx.send(roll_fate_dice(modifier))
 
     match = re.match(r"(\d*)d(\d*)([+-]\d*)?", notation)
     if match:
-        print("has match d")
         (count, side, modifier) = match.groups()
         count = int(count if count else 1)
         side = int(side if side else 6)
@@ -102,10 +87,26 @@ async def roll(ctx, *args):
 
 @bot.command(name="fate", aliases=["f"])
 async def fate(ctx, modifier: int = 0):
+    """ Rolls 4 fate dice then adds and optional modifier
+
+    Examples:
+        !fate
+        !f
+        !f +2
+        !fate -1
+     """
     await ctx.send(roll_fate_dice(modifier))
 
 @bot.command(name="mh_roll", aliases=["mh"])
 async def mh_roll(ctx, modifier: int = 0):
+    """ Rolls 2d6+modifier for Monsterhearts
+
+    Examples:
+        !mh
+        !mh 2
+        !mh -1
+    """
+
     await ctx.send(roll_dice(2, 6, modifier))
 
 bot.run(os.environ["DISCORD_TOKEN"])
