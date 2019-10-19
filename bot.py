@@ -46,6 +46,21 @@ async def on_ready():
     print(bot.user.id)
     print('------')
 
+help_str = """
+Available commands:
+  /roll /r /fate /f
+examples:
+  /roll d6
+  /roll 2d6
+  /roll 2d6-3
+  /roll f+2
+  /fate 2
+"""
+
+@bot.command()
+async def help(ctx):
+    await ctx.send(help_str)
+
 @bot.command()
 async def greet(ctx):
     await ctx.send("I'm pleased to be of service.")
