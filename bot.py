@@ -48,13 +48,14 @@ async def on_ready():
 
 help_str = """
 Available commands:
-  /roll /r /fate /f
+  /roll /r /fate /f /mh
 examples:
   /roll d6
   /roll 2d6
   /roll 2d6-3
   /roll f+2
   /fate 2
+  /mh 2
 """
 
 @bot.command()
@@ -102,5 +103,9 @@ async def roll(ctx, *args):
 @bot.command(name="fate", aliases=["f"])
 async def fate(ctx, modifier: int = 0):
     await ctx.send(roll_fate_dice(modifier))
+
+@bot.command(name="mh_roll", aliases=["mh"])
+async def mh_roll(ctx, modifier: int = 0):
+    await ctx.send(roll_dice(2, 6, modifier))
 
 bot.run(os.environ["DISCORD_TOKEN"])
